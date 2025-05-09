@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechSecure Solutions - ระบบยืนยันตัวตนและควบคุมการเข้าถึง</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>TechSecure Solutions</h1>
+      <h2>ระบบยืนยันตัวตนและควบคุมการเข้าถึง</h2>
+    </header>
+
+    <div class="card">
+      <div id="register-section">
+        <h3>ลงทะเบียนระบบยืนยันตัวตนแบบ TOTP</h3>
+        <div class="form-group">
+          <label for="userId">รหัสผู้ใช้:</label>
+          <input type="text" id="userId" placeholder="กรอกรหัสผู้ใช้">
+        </div>
+        <button id="generateBtn">ลงทะเบียน TOTP</button>
+        <div id="qrcode-container" class="hidden">
+          <p>สแกน QR Code ด้วยแอปพลิเคชัน Authenticator (เช่น Google Authenticator, Microsoft Authenticator)</p>
+          <div id="qrcode"></div>
+          <div class="secret-container">
+            <p>หรือป้อนรหัสลับนี้ในแอปพลิเคชันของคุณ:</p>
+            <code id="secret-key"></code>
+          </div>
+        </div>
+      </div>
+
+      <div id="verify-section" class="hidden">
+        <h3>ยืนยันตัวตนด้วย TOTP</h3>
+        <div class="form-group">
+          <label for="token">รหัส TOTP:</label>
+          <input type="text" id="token" placeholder="กรอกรหัส 6 หลักจากแอปพลิเคชัน Authenticator">
+        </div>
+        <button id="verifyBtn">ยืนยันตัวตน</button>
+        <div id="result-container" class="hidden">
+          <p id="result-message"></p>
+          <p id="timestamp"></p>
+        </div>
+      </div>
+
+      <div id="audit-section" class="hidden">
+        <h3>ประวัติการใช้งาน</h3>
+        <button id="auditBtn">แสดงประวัติการใช้งาน</button>
+        <div id="audit-result" class="hidden">
+          <p id="registration-time"></p>
+          <p id="last-used"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <h3>ข้อมูลเกี่ยวกับความปลอดภัยของระบบ</h3>
+      <ul>
+        <li>ระบบนี้ใช้ Time-based One-Time Password (TOTP) ซึ่งเป็นมาตรฐานการยืนยันตัวตนที่ปลอดภัย</li>
+        <li>รหัส TOTP จะเปลี่ยนทุก 30 วินาที และใช้ได้เพียงครั้งเดียว</li>
+        <li>การพยายามเข้าสู่ระบบที่ผิดพลาด 5 ครั้งติดต่อกันจะทำให้บัญชีถูกล็อกชั่วคราว</li>
+        <li>ระบบมีการบันทึกกิจกรรมทั้งหมดเพื่อการตรวจสอบย้อนหลัง</li>
+        <li>มาตรฐานที่ใช้: ISO/IEC 27001 และสอดคล้องกับ PDPA</li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
