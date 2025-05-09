@@ -1,133 +1,139 @@
-# TOTP Authentication Lab
+# TOTP Authentication Lab (ระบบยืนยันตัวตนแบบ TOTP)
 
-A demonstration of Time-based One-Time Password (TOTP) authentication for two-factor authentication (2FA).
+ตัวอย่างระบบการยืนยันตัวตนแบบ Time-based One-Time Password (TOTP) สำหรับการยืนยันตัวตนแบบสองชั้น (2FA)
 
-## Features
+## คุณสมบัติ
 
-- Generate TOTP secrets and QR codes for authentication apps
-- Verify TOTP tokens
-- Account lockout after multiple failed attempts
-- Basic audit trail functionality
+- สร้าง TOTP secret และ QR code สำหรับแอปพลิเคชันยืนยันตัวตน (เช่น Google Authenticator)
+- ตรวจสอบรหัส TOTP
+- ล็อคบัญชีหลังจากพยายามเข้าสู่ระบบล้มเหลวหลายครั้ง
+- บันทึกกิจกรรมพื้นฐาน (Audit Trail)
 
-## Prerequisites
+## ความต้องการของระบบ
 
 - Node.js (v16+)
 - npm
-- AWS account (for EC2 deployment)
+- บัญชี AWS (สำหรับการติดตั้งบน EC2)
 
-## Local Development
+## การพัฒนาบนเครื่องส่วนตัว
 
-1. Clone the repository:
+1. โคลนโปรเจค:
    ```
    git clone https://github.com/yourusername/totp-auth-lab.git
    cd totp-auth-lab
    ```
 
-2. Install dependencies:
+2. ติดตั้งแพ็คเกจที่จำเป็น:
    ```
    npm install
    ```
 
-3. Start the development server:
+3. เริ่มต้นเซิร์ฟเวอร์สำหรับการพัฒนา:
    ```
    npm run dev
    ```
 
-4. Access the application at: http://localhost:3000
+4. เข้าถึงแอปพลิเคชันที่: http://localhost:3000
 
-## Deploying to AWS EC2
+## การติดตั้งบน AWS EC2
 
-### 1. Set up an EC2 Instance
+### 1. สร้าง EC2 Instance
 
-1. Log in to your AWS Management Console
-2. Navigate to EC2 Dashboard
-3. Launch a new EC2 instance:
-   - Choose an Amazon Linux 2023 AMI
-   - Select t2.micro (eligible for free tier)
-   - Configure security group to allow inbound traffic on:
-     - SSH (port 22)
-     - HTTP (port 80)
-     - HTTPS (port 443)
-     - Custom TCP (port 3000) - if you want to access the app directly without a reverse proxy
-   - Create and download a new key pair (.pem file)
-   - Launch the instance
+1. เข้าสู่ระบบ AWS Management Console
+2. ไปที่ EC2 Dashboard
+3. สร้าง EC2 instance ใหม่:
+   - เลือก Amazon Linux 2023 AMI
+   - เลือก t2.micro (อยู่ในระดับ free tier)
+   - ตั้งค่า security group ให้อนุญาต inbound traffic บน:
+     - SSH (พอร์ต 22)
+     - HTTP (พอร์ต 80)
+     - HTTPS (พอร์ต 443)
+     - Custom TCP (พอร์ต 3000) - หากต้องการเข้าถึงแอปโดยตรงโดยไม่ใช้ reverse proxy
+   - สร้างและดาวน์โหลด key pair (.pem file)
+   - เริ่มใช้งาน instance
 
-### 2. Connect to Your EC2 Instance
+### 2. เชื่อมต่อกับ EC2 Instance ของคุณ
 
 ```bash
 chmod 400 your-key-pair.pem
 ssh -i your-key-pair.pem ec2-user@your-instance-public-dns
 ```
 
-### 3. Install Node.js and Git on the EC2 Instance
+### 3. ติดตั้ง Node.js และ Git บน EC2 Instance
 
 ```bash
-# Update system packages
+# อัปเดตแพ็คเกจระบบ
 sudo yum update -y
 
-# Install Node.js and npm
-curl -fsSL https://rpm.nodesource.com/setup_18.x | sudo bash -
+# ติดตั้ง Node.js และ npm
+sudo yum install -y gcc-c++ make
+curl -sL https://rpm.nodesource.com/setup_18.x | sudo -E bash -
 sudo yum install -y nodejs
 
-# Install Git
-sudo yum install -y git
-
-# Verify installations
+# ตรวจสอบการติดตั้ง Node.js และ npm
 node -v
 npm -v
+
+# ติดตั้ง Git
+sudo yum install -y git
+
+# ตรวจสอบการติดตั้ง Git
 git --version
 ```
 
-### 4. Clone and Set Up Your Application
+### 4. ติดตั้งแอปพลิเคชันของคุณ
 
 ```bash
-# Clone the repository
+# โคลนโปรเจคจาก GitHub (หรืออัปโหลดไฟล์โดยตรง)
 git clone https://github.com/yourusername/totp-auth-lab.git
 cd totp-auth-lab
 
-# Install dependencies
+# ติดตั้งแพ็คเกจที่จำเป็น
 npm install
 
-# Start the application
+# รันแอปพลิเคชัน
 npm start
 ```
 
-At this point, your application should be running on port 3000 of your EC2 instance.
+ในขั้นตอนนี้ แอปพลิเคชันของคุณควรทำงานที่พอร์ต 3000 บน EC2 instance
 
-### 5. Set Up PM2 for Process Management (Production)
+### 5. ตั้งค่า PM2 สำหรับการจัดการโปรเซส (แนะนำสำหรับการใช้งานจริง)
 
-PM2 is a process manager for Node.js applications that keeps your application running.
+PM2 เป็นตัวจัดการโปรเซสสำหรับแอพพลิเคชัน Node.js ที่ช่วยให้แอพของคุณทำงานต่อเนื่องแม้เกิดข้อผิดพลาด
 
 ```bash
-# Install PM2 globally
+# ติดตั้ง PM2 แบบ global
 sudo npm install -g pm2
 
-# Start your application with PM2
+# เริ่มต้นแอปพลิเคชันด้วย PM2
 pm2 start server.js --name "totp-auth-lab"
 
-# Set PM2 to start on system boot
+# ตั้งค่าให้ PM2 เริ่มทำงานเมื่อเปิดเครื่อง
 pm2 startup
-# (Follow the instructions output by this command)
+# (ทำตามคำแนะนำที่แสดงจากคำสั่งนี้)
 
-# Save the PM2 process list
+# บันทึกรายการโปรเซส PM2
 pm2 save
+
+# ตรวจสอบสถานะแอปพลิเคชัน
+pm2 status
 ```
 
-### 6. Set Up Nginx as a Reverse Proxy (Optional but Recommended)
+### 6. ตั้งค่า Nginx เป็น Reverse Proxy (แนะนำ)
 
 ```bash
-# Install Nginx
+# ติดตั้ง Nginx
 sudo yum install -y nginx
 
-# Start Nginx
+# เริ่มต้น Nginx และตั้งค่าให้ทำงานเมื่อเปิดเครื่อง
 sudo systemctl start nginx
 sudo systemctl enable nginx
 
-# Configure Nginx as a reverse proxy
+# สร้างไฟล์คอนฟิกสำหรับแอปพลิเคชันของคุณ
 sudo nano /etc/nginx/conf.d/totp-auth-lab.conf
 ```
 
-Add the following configuration:
+เพิ่มการตั้งค่าต่อไปนี้:
 
 ```
 server {
@@ -146,37 +152,93 @@ server {
 ```
 
 ```bash
-# Test Nginx configuration
+# ทดสอบการตั้งค่า Nginx
 sudo nginx -t
 
-# Reload Nginx to apply changes
+# รีโหลด Nginx เพื่อใช้การตั้งค่าใหม่
 sudo systemctl reload nginx
+
+# หากพบปัญหา ตรวจสอบ log
+sudo tail -f /var/log/nginx/error.log
 ```
 
-Now you can access your application via your domain name or EC2 public IP without specifying the port.
+ตอนนี้คุณสามารถเข้าถึงแอปพลิเคชันผ่านโดเมนหรือ IP สาธารณะของ EC2 โดยไม่ต้องระบุพอร์ต
 
-### 7. Set Up SSL with Let's Encrypt (Optional but Recommended)
+### 7. ตั้งค่า SSL ด้วย Let's Encrypt (แนะนำสำหรับการใช้งานจริง)
 
-For production environments, you should secure your application with HTTPS.
+สำหรับการใช้งานจริง คุณควรเพิ่มความปลอดภัยให้แอปพลิเคชันของคุณด้วย HTTPS
 
 ```bash
-# Install Certbot
+# ติดตั้ง EPEL repository
+sudo yum install -y epel-release
+
+# ติดตั้ง Certbot และปลั๊กอินสำหรับ Nginx
 sudo yum install -y certbot python3-certbot-nginx
 
-# Obtain and configure SSL certificate
+# ขอและตั้งค่าใบรับรอง SSL
 sudo certbot --nginx -d your_domain_name
 ```
 
-Follow the prompts to complete the setup. Certbot will automatically update your Nginx configuration.
+ทำตามคำแนะนำเพื่อเสร็จสิ้นการตั้งค่า Certbot จะอัปเดตการตั้งค่า Nginx ของคุณโดยอัตโนมัติ
 
-## Security Considerations
+### 8. การตั้งค่าไฟร์วอลล์ (สำหรับ Amazon Linux)
 
-- In a production environment, store user secrets in a database, not in memory
-- Add proper user authentication before TOTP verification
-- Implement additional security headers
-- Consider implementing rate limiting
-- Regularly update dependencies for security patches
+```bash
+# ตรวจสอบสถานะไฟร์วอลล์
+sudo systemctl status firewalld
 
-## License
+# หากยังไม่ได้ติดตั้ง ให้ติดตั้ง firewalld
+sudo yum install -y firewalld
+sudo systemctl start firewalld
+sudo systemctl enable firewalld
+
+# เปิดพอร์ตที่จำเป็น
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --permanent --add-service=https
+sudo firewall-cmd --permanent --add-service=ssh
+sudo firewall-cmd --reload
+
+# ตรวจสอบการตั้งค่า
+sudo firewall-cmd --list-all
+```
+
+## ข้อควรพิจารณาด้านความปลอดภัย
+
+- ในสภาพแวดล้อมการใช้งานจริง ควรเก็บข้อมูลลับของผู้ใช้ในฐานข้อมูล ไม่ใช่ในหน่วยความจำ
+- เพิ่มการตรวจสอบตัวตนผู้ใช้ที่เหมาะสมก่อนการตรวจสอบ TOTP
+- ใช้ HTTP Security Headers เพิ่มเติม
+- พิจารณาใช้การจำกัดการเรียกใช้ API (Rate Limiting)
+- อัปเดตแพ็คเกจอย่างสม่ำเสมอเพื่อความปลอดภัย
+
+## วิธีการแก้ไขปัญหาเบื้องต้น
+
+### แอปพลิเคชันไม่ทำงาน
+```bash
+# ตรวจสอบบันทึกของแอปพลิเคชัน
+pm2 logs
+
+# รีสตาร์ทแอปพลิเคชัน
+pm2 restart totp-auth-lab
+```
+
+### ปัญหาเกี่ยวกับ Nginx
+```bash
+# ตรวจสอบสถานะ Nginx
+sudo systemctl status nginx
+
+# ตรวจสอบไฟล์บันทึกข้อผิดพลาด
+sudo tail -f /var/log/nginx/error.log
+```
+
+### ปัญหาเกี่ยวกับไฟร์วอลล์
+```bash
+# ตรวจสอบสถานะไฟร์วอลล์
+sudo systemctl status firewalld
+
+# ตรวจสอบการตั้งค่าไฟร์วอลล์
+sudo firewall-cmd --list-all
+```
+
+## ลิขสิทธิ์
 
 ISC
